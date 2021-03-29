@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4629758186783988190
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4629758186783988191}
+  - component: {fileID: 4629758186783988176}
+  - component: {fileID: 4629758186783988177}
+  m_Layer: 0
+  m_Name: CreativeSoundtrackManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4629758186783988191
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4629758186783988190}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -25.344025, y: -2.9734507, z: 5.3112936}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4629758186783988176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4629758186783988190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a22ca5db862d8742b0df5ef607db192, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SavedTokenJSON: 
+  spotifyService: {fileID: 4629758186783988177}
+  currentAreaPlaying: -1
+--- !u!114 &4629758186783988177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4629758186783988190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ca646b88b99ddd45a8984e783548cfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ClientId: 221b1ed7900947d3a412f455a9003fd9
+  ConnectionTimeout: 60
+  AutoConnect: 0
+  UpdateFrequencyMs: 1000
+  LogLevel: 2
+  ReuseAuthTokens: 1
+  Scopes: 260094
+  IsPlaying: 0
+  IsConnected: 0
+  IsMuted: 0
+  ShuffleState: 0
+  RepeatState: 0
+  CurrentTrackTimeMs: 0
+  SecretId: 13e74dfa5a3446849d91e0c664ba9b3a
+  ConnectionPort: 8000
