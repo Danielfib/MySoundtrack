@@ -1,4 +1,5 @@
 ﻿using SpotifyAPI.Web;
+using SpotifyAPI.Web.Auth;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,59 +14,52 @@ public class SpotifyWebAPIService : MonoBehaviour
     private const string client_secret = "13e74dfa5a3446849d91e0c664ba9b3a"; // Your secret
     private const string redirect_uri = "http://localhost:8888/callback"; // Your redirect uri
 
-    private const string scopes = "user-read-private user-read-email";
+    private EmbedIOAuthServer _server;
 
-    string verifier, challenge;
+    public async Task StartStuff()
+    {
+        _server = new EmbedIOAuthServer(new Uri(redirect_uri), 5000);
+        await _server.Start();
 
-    // Start is called before the first frame update
+        _server.AuthorizationCodeReceived += OnAuthorizationCodeReceived;
+        _server.ErrorReceived += OnErrorReceived;
+
+        var request = new LoginRequest(_server.BaseUri, client_id, LoginRequest.ResponseType.Code)
+        {
+            Scope = new List<string> { Scopes.UserReadEmail }
+        };
+        BrowserUtil.Open(request.ToUri());
+    }
+
+    private async Task OnAuthorizationCodeReceived(object sender, AuthorizationCodeResponse response)
+    {
+        await _server.Stop();
+
+        var config = SpotifyClientConfig.CreateDefault();
+        var tokenResponse = await new OAuthClient(config).RequestToken(
+          new AuthorizationCodeTokenRequest(
+            client_id, client_secret, response.Code, new Uri(redirect_uri)
+          )
+        );
+
+        var spotify = new SpotifyClient(tokenResponse.AccessToken);
+        // do calls with Spotify and save token?
+    }
+
+    private async Task OnErrorReceived(object sender, string error, string state)
+    {
+        Console.WriteLine($"Aborting authorization, error received: {error}");
+        await _server.Stop();
+    }
+
+
     void Start()
     {
-        // Generates a secure random verifier of length 100 and its challenge
-        (verifier, challenge) = PKCEUtil.GenerateCodes();
-
-        var loginRequest = new LoginRequest(
-            new Uri("http://localhost:5000/callback"),
-            client_id,
-            LoginRequest.ResponseType.Code
-        )
-        {
-            CodeChallengeMethod = "S256",
-            CodeChallenge = challenge,
-            Scope = new[] { Scopes.PlaylistReadPrivate, Scopes.PlaylistReadCollaborative }
-        };
-
-        var uri = loginRequest.ToUri();
-        Task.Run(() => ListenForCallback());
-        Application.OpenURL(uri.ToString());
-    }
-
-    private async void ListenForCallback()
-    {
-        HttpListener httpListener = new HttpListener();
-        httpListener.Prefixes.Add("http://localhost:5000/callback/");
-        httpListener.Start();
-
-        HttpListenerContext context = httpListener.GetContext(); //waits for response
-        HttpListenerRequest request = context.Request;
-        string code = request.QueryString["code"];
-        httpListener.Stop();
-        await GetCallback(code);
-    }
-
-    // This method should be called from your web-server when the user visits "http://localhost:5000/callback"
-    public async Task GetCallback(string code)
-    {
-        // Note that we use the verifier calculated above!
-        PKCETokenRequest req = new PKCETokenRequest(client_id, code, new Uri("http://localhost:5000"), verifier);
-        Debug.Log("1");
-        var initialResponse = await new OAuthClient().RequestToken(req);
-        Debug.Log("2"); //TODO: Understand why execution never gets here. It waits forever
-        var spotify = new SpotifyClient(initialResponse.AccessToken);
-        // Also important for later: response.RefreshToken
+        StartStuff();
     }
 
     private void OnDestroy()
     {
-        
+
     }
 }
