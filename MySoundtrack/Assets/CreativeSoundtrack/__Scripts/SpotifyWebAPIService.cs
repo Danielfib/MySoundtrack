@@ -79,7 +79,8 @@ public class SpotifyWebAPIService : Singleton<SpotifyWebAPIService>
 
     public async Task PlayTrack(FullTrack track)
     {
-        if (!Spotify.Player.GetCurrentPlayback().Result.IsPlaying)
+        CurrentlyPlayingContext player = await Spotify.Player.GetCurrentPlayback();
+        if (!player.IsPlaying)
         {
             await Spotify.Player.ResumePlayback();
         }

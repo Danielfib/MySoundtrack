@@ -19,7 +19,7 @@ public class CreativeSoundtrackManager : Singleton<CreativeSoundtrackManager>
 
     List<Tuple<Vector3, Action>> initializationActions = new List<Tuple<Vector3, Action>>();
 
-    private const int SONG_ABOUT_TO_END_TOLERANCE = 2000; //milliseconds
+    private const int SONG_ABOUT_TO_END_TOLERANCE = 4000; //milliseconds
 
     private Vector3 startingPlayerPos = Vector3.zero;
 
@@ -69,13 +69,9 @@ public class CreativeSoundtrackManager : Singleton<CreativeSoundtrackManager>
         initializationActions.OrderBy(x => Vector3.Distance(x.Item1, startingPlayerPos));
     }
 
-    private IEnumerator StartWatchForSongEnd(Action callback)
+    private IEnumerator StartWatchForSongEnd(Action callback, int timeToEnd)
     {
-        yield return new WaitForSeconds(10);
-        
-        int timeToEnd = SpotifyWebAPIService.Instance.GetPlaybackTimeToEnd().Result;
         yield return new WaitForSeconds((timeToEnd - SONG_ABOUT_TO_END_TOLERANCE) / 1000f);
-
         callback.Invoke();
     }
 
@@ -134,7 +130,7 @@ public class CreativeSoundtrackManager : Singleton<CreativeSoundtrackManager>
         await SpotifyWebAPIService.Instance.PlayTrack(track);
 
         StopAllCoroutines();
-        StartCoroutine(StartWatchForSongEnd(songAboutToEndCallback));
+        StartCoroutine(StartWatchForSongEnd(songAboutToEndCallback, track.DurationMs));
     }
 
     private void OnApplicationQuit()
