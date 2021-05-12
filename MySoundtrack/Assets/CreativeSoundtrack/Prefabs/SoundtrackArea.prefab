@@ -11,10 +11,11 @@ GameObject:
   - component: {fileID: 2979112111759290302}
   - component: {fileID: 2979112111759290297}
   - component: {fileID: 2979112111759290303}
+  - component: {fileID: 7155536738896667732}
   m_Layer: 0
   m_Name: SoundtrackArea
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2800000, guid: c1c1ffe55b5d4e047a167a02e1986326, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -58,3 +59,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 15306
+  energy: 1
+  valence: 0.4
+  selectedVibeColor: {r: 0.90588236, g: 0.89411765, b: 0.3529412, a: 1}
+  toolbarIntAux: 0
+  toolbarInt: 0
+--- !u!54 &7155536738896667732
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2979112111759290296}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4629758186783988191}
   - component: {fileID: 4629758186783988176}
-  - component: {fileID: 4629758186783988177}
+  - component: {fileID: 8279468712038829072}
   m_Layer: 0
   m_Name: CreativeSoundtrackManager
   m_TagString: Untagged
@@ -45,9 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SavedTokenJSON: 
-  spotifyService: {fileID: 4629758186783988177}
   currentAreaPlaying: -1
---- !u!114 &4629758186783988177
+--- !u!114 &8279468712038829072
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -56,21 +55,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 4629758186783988190}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ca646b88b99ddd45a8984e783548cfa, type: 3}
+  m_Script: {fileID: 11500000, guid: 78617edd0f08aba4d9a81ca521012b6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ClientId: 221b1ed7900947d3a412f455a9003fd9
-  ConnectionTimeout: 60
-  AutoConnect: 0
-  UpdateFrequencyMs: 1000
-  LogLevel: 2
-  ReuseAuthTokens: 1
-  Scopes: 260094
-  IsPlaying: 0
-  IsConnected: 0
-  IsMuted: 0
-  ShuffleState: 0
-  RepeatState: 0
-  CurrentTrackTimeMs: 0
-  SecretId: 13e74dfa5a3446849d91e0c664ba9b3a
-  ConnectionPort: 8000
