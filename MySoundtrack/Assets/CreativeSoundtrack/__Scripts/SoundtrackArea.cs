@@ -1,4 +1,4 @@
-﻿using Spotify4Unity.Dtos;
+﻿using SpotifyAPI.Web;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class SoundtrackArea : MonoBehaviour
 {
-    List<Track> tracks = new List<Track>();
+    List<FullTrack> tracks = new List<FullTrack>();
     private int currentTrackId = 0;
 
     [HideInInspector]
@@ -44,7 +44,8 @@ public class SoundtrackArea : MonoBehaviour
     {
         //Debug.Log("Start new area!");
         id = gameObject.GetInstanceID();
-        CreativeSoundtrackManager.Instance.AddInitilizationAction(new Tuple<Vector3, Action>(transform.position, () => {
+        CreativeSoundtrackManager.Instance.AddInitilizationAction(new Tuple<Vector3, Action>(transform.position, () =>
+        {
             new Thread(() =>
             {
                 tracks.AddRange(CreativeSoundtrackManager.Instance.GetBestSongsFor(energy, valence, 7));
