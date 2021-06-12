@@ -12,7 +12,8 @@ using UnityEngine.Networking;
 public class SpotifyWebAPIService : Singleton<SpotifyWebAPIService>
 {
     private const string client_id = "221b1ed7900947d3a412f455a9003fd9"; // Your client id
-    private const string client_secret = "13e74dfa5a3446849d91e0c664ba9b3a"; // Your secret
+    [SerializeField]
+    private string client_secret; // Your secret
     private const string redirect_uri = "http://localhost:5000/callback"; // Your redirect uri
 
     private EmbedIOAuthServer _server;
