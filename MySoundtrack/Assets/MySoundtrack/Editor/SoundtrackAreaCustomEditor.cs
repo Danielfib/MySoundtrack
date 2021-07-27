@@ -43,9 +43,9 @@ public class SoundtrackAreaCustomEditor : Editor
         //source code links
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("Open Source Code"))
-            Application.OpenURL("https://github.com/Danielfib/CreativeSoundtrackUnity");
-        if (GUILayout.Button("Open Spotify Dashboard"))
-            Application.OpenURL("https://developer.spotify.com/dashboard/");
+            Application.OpenURL("https://github.com/Danielfib/MySoundtrack");
+        //if (GUILayout.Button("Open Spotify Dashboard"))
+        //    Application.OpenURL("https://developer.spotify.com/dashboard/");
         GUILayout.EndHorizontal();
 
         GUILayout.Space(20f);

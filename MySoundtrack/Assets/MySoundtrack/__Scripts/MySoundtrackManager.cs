@@ -6,12 +6,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using MySoundtrackService;
 
-public class CreativeSoundtrackManager : Singleton<CreativeSoundtrackManager>
+public class MySoundtrackManager : Singleton<MySoundtrackManager>
 {
-    [HideInInspector]
-    public string SavedTokenJSON;
-
     private List<FullTrack> m_tracks = null;
 
     [HideInInspector]
@@ -23,6 +21,8 @@ public class CreativeSoundtrackManager : Singleton<CreativeSoundtrackManager>
 
     private Vector3 startingPlayerPos = Vector3.zero;
 
+    private SpotifyWebAPIService service;
+
     private void Start()
     {
         startingPlayerPos = Vector3.zero; //TODO
@@ -30,16 +30,22 @@ public class CreativeSoundtrackManager : Singleton<CreativeSoundtrackManager>
 
         Thread initThread = new Thread(Initialize);
         initThread.Start();
+
+        if(service == null)
+        {
+            service = new SpotifyWebAPIService();
+        }
     }
 
     private void Connect()
     {
-        SpotifyWebAPIService.Instance.Connect();
+        service.Connect();
     }
 
     public async Task GetAllUserTracks()
     {
-        m_tracks = await SpotifyWebAPIService.Instance.GetAllUserSavedTracks();
+        print("getting user songs");
+        m_tracks = await service.GetAllUserSavedTracks();
         Debug.Log("Got user songs!");
     }
 
@@ -47,8 +53,9 @@ public class CreativeSoundtrackManager : Singleton<CreativeSoundtrackManager>
     {
         Connect();
 
-        SpotifyWebAPIService.Instance.InitializedSpotify += async () =>
+        service.InitializedSpotify += async () =>
         {
+            print("initialized spotify");
             await GetAllUserTracks();
             OrderInitializationsToCloserToPlayer();
             InvokeInitializationActions();
@@ -104,7 +111,7 @@ public class CreativeSoundtrackManager : Singleton<CreativeSoundtrackManager>
         {
             int howMany = Math.Min(100, tracksIds.Count - i - 1);
             var sublist = tracksIds.GetRange(i, howMany);
-            var af = SpotifyWebAPIService.Instance.GetSeveralAudioFeatures(sublist).Result;
+            var af = service.GetSeveralAudioFeatures(sublist).Result;
             audioFeatures.AddRange(af);
         }
 
@@ -117,9 +124,9 @@ public class CreativeSoundtrackManager : Singleton<CreativeSoundtrackManager>
                            Math.Abs(f.Valence - valence));
 
             trackGrades.Add(new Tuple<FullTrack, float>(m_tracks[count], grade));
-            trackGrades.Sort((a, b) => a.Item2.CompareTo(b.Item2));
             count++;
         }
+        trackGrades.Sort((a, b) => a.Item2.CompareTo(b.Item2));
 
         return (trackGrades.Select(x => x.Item1).ToList());
     }
@@ -127,14 +134,24 @@ public class CreativeSoundtrackManager : Singleton<CreativeSoundtrackManager>
     public async void PlayTrack(FullTrack track, Action songAboutToEndCallback)
     {
         Debug.Log("Playing " + track.Name);
-        await SpotifyWebAPIService.Instance.PlayTrack(track);
+        await service.PlayTrack(track);
 
         StopAllCoroutines();
         StartCoroutine(StartWatchForSongEnd(songAboutToEndCallback, track.DurationMs));
     }
 
+    public void PausePlayback()
+    {
+        service.PausePlayback();
+    }
+
+    public void PlayPlayback()
+    {
+        service.PlayPlayback();
+    }
+
     private void OnApplicationQuit()
     {
-        //PlayerPrefs.SetString("backedUpTokenJSON", SavedTokenJSON);
+        
     }
 }

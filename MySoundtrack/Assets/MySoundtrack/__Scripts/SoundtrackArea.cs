@@ -10,6 +10,7 @@ public class SoundtrackArea : MonoBehaviour
 {
     List<FullTrack> tracks = new List<FullTrack>();
     private int currentTrackId = 0;
+    private bool isInitialized;
 
     [HideInInspector]
     public int id;
@@ -42,14 +43,14 @@ public class SoundtrackArea : MonoBehaviour
 
     private void Start()
     {
-        //Debug.Log("Start new area!");
         id = gameObject.GetInstanceID();
-        CreativeSoundtrackManager.Instance.AddInitilizationAction(new Tuple<Vector3, Action>(transform.position, () =>
+        MySoundtrackManager.Instance.AddInitilizationAction(new Tuple<Vector3, Action>(transform.position, () =>
         {
             new Thread(() =>
             {
-                tracks.AddRange(CreativeSoundtrackManager.Instance.GetBestSongsFor(energy, valence, 7));
-                Debug.Log("InitializedArea");
+                tracks.AddRange(MySoundtrackManager.Instance.GetBestSongsFor(energy, valence, 7));
+                print("InitializedArea");
+                isInitialized = true;
             }).Start();
         }));
     }
@@ -64,11 +65,16 @@ public class SoundtrackArea : MonoBehaviour
 
     public void PlayerEntered()
     {
-        if (CreativeSoundtrackManager.Instance.EnteredNewArea(id))
+        if (!isInitialized)
         {
-            Debug.Log("Playing song with: " + energy + " " + valence);
+            print("Area not yet initialized, give it a moment!");
+            return;
+        }
+
+        if (MySoundtrackManager.Instance.EnteredNewArea(id))
+        {
             var rdmTop3 = UnityEngine.Random.Range(0, Mathf.Min(3, tracks.Count));
-            CreativeSoundtrackManager.Instance.PlayTrack(tracks[rdmTop3], PlayNextSong);
+            MySoundtrackManager.Instance.PlayTrack(tracks[rdmTop3], PlayNextSong);
         }
     }
 
@@ -85,7 +91,7 @@ public class SoundtrackArea : MonoBehaviour
         }
 
         var nextSong = tracks[randomIndex];
-        CreativeSoundtrackManager.Instance.PlayTrack(nextSong, PlayNextSong);
+        MySoundtrackManager.Instance.PlayTrack(nextSong, PlayNextSong);
         currentTrackId = randomIndex;
     }
 }
