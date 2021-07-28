@@ -16,6 +16,8 @@ public class SoundtrackAreaCustomEditor : Editor
 
     const int ICON_HEIGHT = 40;
 
+    bool showAudioFeatures = false;
+
     private static readonly string[] _dontIncludeMe = new string[] { "m_Script" };
 
     SerializedObject obj;
@@ -84,6 +86,31 @@ public class SoundtrackAreaCustomEditor : Editor
             tbIntAuxProp.intValue = toolbarIntAux;
             colorProp.colorValue = getVibeColor(toolbarInt);
             obj.ApplyModifiedProperties();
+        }
+
+        showAudioFeatures = EditorGUILayout.Foldout(showAudioFeatures, "Audio Features", EditorStyles.foldout);
+
+        if (showAudioFeatures)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Energy", EditorStyles.label);
+            float sliderEValue = EditorGUILayout.Slider(energyProp.floatValue, 0, 1, GUILayout.Width(160));
+            if (sliderEValue != energyProp.floatValue)
+            {
+                energyProp.floatValue = sliderEValue;
+                tbIntProp.intValue = -1;//unchecks toolbar
+            }
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Valence", EditorStyles.label);
+            float sliderVValue = EditorGUILayout.Slider(valenceProp.floatValue, 0, 1, GUILayout.Width(160));
+            if(sliderVValue != valenceProp.floatValue)
+            {
+                valenceProp.floatValue = sliderVValue;
+                tbIntProp.intValue = -1;//unchecks toolbar
+            }
+            GUILayout.EndHorizontal();
         }
     }
 
