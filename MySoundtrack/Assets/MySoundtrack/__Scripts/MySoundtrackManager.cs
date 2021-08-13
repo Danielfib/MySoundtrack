@@ -95,10 +95,15 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
         foreach (var playlist in playlistsIds)
         {
             string id = playlist;
-            if (playlist.Contains(':'))
+            if (playlist.Contains(':') && !playlist.Contains("https"))
             {
                 var substringStart = playlist.LastIndexOf(':');
                 id = playlist.Substring(substringStart + 1, (playlist.Length - 1) - substringStart);
+            } else if (playlist.Contains('/'))
+            {
+                var substringStart = playlist.LastIndexOf('/');
+                var substringEnd = playlist.LastIndexOf('?') - 1;
+                id = playlist.Substring(substringStart + 1, substringEnd - substringStart);
             }
 
             PlaylistGetItemsRequest req = new PlaylistGetItemsRequest(PlaylistGetItemsRequest.AdditionalTypes.Track);
