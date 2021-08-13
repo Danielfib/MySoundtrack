@@ -93,7 +93,7 @@ public class SoundtrackAreaCustomEditor : Editor
         if (showAudioFeatures)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Energy", EditorStyles.label);
+            GUILayout.Label(new GUIContent("Energy", "Higher energy values represents noisier and more agitated songs. Lower values represents calmer songs."), EditorStyles.label);
             float sliderEValue = EditorGUILayout.Slider(energyProp.floatValue, 0, 1, GUILayout.Width(160));
             if (sliderEValue != energyProp.floatValue)
             {
@@ -103,7 +103,7 @@ public class SoundtrackAreaCustomEditor : Editor
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Valence", EditorStyles.label);
+            GUILayout.Label(new GUIContent("Valence", "Evaluates the song's positiveness. High valence could represent a excited or tranquil song. Low valence could represent a angry or sad song."), EditorStyles.label);
             float sliderVValue = EditorGUILayout.Slider(valenceProp.floatValue, 0, 1, GUILayout.Width(160));
             if(sliderVValue != valenceProp.floatValue)
             {
