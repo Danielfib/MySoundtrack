@@ -30,8 +30,7 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
 
     private void Start()
     {
-        startingPlayerPos = Vector3.zero; //TODO
-        //startingPlayerPos = GameObject.FindGameObjectWithTag("Player").transform.position;
+        startingPlayerPos = Vector3.zero;
 
         Thread initThread = new Thread(Initialize);
         initThread.Start();
@@ -50,22 +49,19 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
     public async Task GetAllUserTracks()
     {
         print("getting user songs");
-        //m_tracks = await service.GetAllUserSavedTracks();
-        //if (m_tracks == null || m_tracks.Count == 0)
-        //{
-        //    await UseBackupPlaylists();
-        //}
-        //await UseFeaturedPlaylists();
-        await UseBackupPlaylists();
+        m_tracks = await service.GetAllUserSavedTracks();
+        if (m_tracks == null || m_tracks.Count == 0)
+        {
+            await UseBackupPlaylistsInstead();
+        }
         Debug.Log("Got user songs!");
     }
 
-    private async Task UseBackupPlaylists()
+    private async Task UseBackupPlaylistsInstead()
     {
         if(BackupPlaylists.Length == 0)
         {
-            //throw new Exception("Player doesn't have enough songs and you have not chosen BackupPlaylists at MySoundtrackManager!");
-            await UseFeaturedPlaylists();
+            await UseFeaturedPlaylistsInstead();
         } 
         else
         {
@@ -73,7 +69,7 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
         }
     }
 
-    private async Task UseFeaturedPlaylists()
+    private async Task UseFeaturedPlaylistsInstead()
     {
         FeaturedPlaylistsRequest req = new FeaturedPlaylistsRequest();
         req.Limit = MAX_FEATURED_PLAYLISTS;
