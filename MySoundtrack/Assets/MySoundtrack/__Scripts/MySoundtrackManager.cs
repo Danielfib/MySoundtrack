@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using MySoundtrackService;
+using MySoundtrack_Service;
 
 public class MySoundtrackManager : Singleton<MySoundtrackManager>
 {
@@ -24,9 +24,7 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
 
     private Vector3 startingPlayerPos = Vector3.zero;
 
-    private SpotifyWebAPIService service;
-
-    private const int MAX_FEATURED_PLAYLISTS = 5, MAX_TRACKS_PER_FEATURED_PLAYLIST = 90;
+    private MySoundtrackService mss;
 
     private void Start()
     {
@@ -35,21 +33,21 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
         Thread initThread = new Thread(Initialize);
         initThread.Start();
 
-        if(service == null)
+        if(mss == null)
         {
-            service = new SpotifyWebAPIService();
+            mss = new MySoundtrackService();
         }
     }
 
     private void Connect()
     {
-        service.Connect();
+        mss.Connect();
     }
 
     public async Task GetAllUserTracks()
     {
         print("getting user songs");
-        m_tracks = await service.GetAllUserSavedTracks();
+        m_tracks = await mss.GetAllUserSavedTracks();
         if (m_tracks == null || m_tracks.Count == 0)
         {
             await UseBackupPlaylistsInstead();
@@ -65,65 +63,20 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
         } 
         else
         {
-            m_tracks.AddRange(await GetPlaylistsTracks(BackupPlaylists));
+            m_tracks.AddRange(await mss.GetPlaylistsTracks(BackupPlaylists));
         }
     }
 
     private async Task UseFeaturedPlaylistsInstead()
     {
-        FeaturedPlaylistsRequest req = new FeaturedPlaylistsRequest();
-        req.Limit = MAX_FEATURED_PLAYLISTS;
-
-        var fPlaylists = await service.Spotify.Browse.GetFeaturedPlaylists(req);
-        string[] lista = new string[Math.Min(MAX_FEATURED_PLAYLISTS, fPlaylists.Playlists.Items.Count)];
-        for(var i = 0; i < fPlaylists.Playlists.Items.Count; i++)
-        {
-            lista[i] = fPlaylists.Playlists.Items[i].Id;
-        }
-
-        m_tracks.AddRange(await GetPlaylistsTracks(lista, true, MAX_TRACKS_PER_FEATURED_PLAYLIST));
-    }
-
-    private async Task<List<FullTrack>> GetPlaylistsTracks(string[] playlistsIds, bool useLimit = false, int limit = 10000)
-    {
-        List<FullTrack> tracks = new List<FullTrack>();
-
-        foreach (var playlist in playlistsIds)
-        {
-            string id = playlist;
-            if (playlist.Contains(':') && !playlist.Contains("https"))
-            {
-                var substringStart = playlist.LastIndexOf(':');
-                var substringEnd = substringStart + 22;
-                id = playlist.Substring(substringStart + 1, substringEnd - substringStart);
-            } else if (playlist.Contains('/'))
-            {
-                var substringStart = playlist.LastIndexOf('/');
-                var substringEnd = substringStart + 22;
-                id = playlist.Substring(substringStart + 1, substringEnd - substringStart);
-            }
-
-            PlaylistGetItemsRequest req = new PlaylistGetItemsRequest(PlaylistGetItemsRequest.AdditionalTypes.Track);
-            if (useLimit) req.Limit = limit;
-
-            var playlistItems = await service.Spotify.Playlists.GetItems(id, req);
-            foreach (var playlistTrack in playlistItems.Items)
-            {
-                if (playlistTrack.Track is FullTrack)
-                {
-                    tracks.Add(playlistTrack.Track as FullTrack);
-                }
-            }
-        }
-
-        return tracks;
+        m_tracks.AddRange(await mss.GetFeaturedPlaylistsSongs());
     }
 
     private void Initialize()
     {
         Connect();
 
-        service.InitializedSpotify += async () =>
+        mss.InitializedSpotify += async () =>
         {
             print("initialized spotify");
             await GetAllUserTracks();
@@ -181,7 +134,7 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
         {
             int howMany = Math.Min(100, tracksIds.Count - i - 1);
             var sublist = tracksIds.GetRange(i, howMany);
-            var af = service.GetSeveralAudioFeatures(sublist).Result;
+            var af = mss.GetSeveralAudioFeatures(sublist).Result;
             audioFeatures.AddRange(af);
         }
 
@@ -207,7 +160,7 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
     public async void PlayTrack(FullTrack track, Action songAboutToEndCallback)
     {
         Debug.Log("Playing " + track.Name);
-        await service.PlayTrack(track);
+        await mss.PlayTrack(track);
 
         StopAllCoroutines();
         StartCoroutine(StartWatchForSongEnd(songAboutToEndCallback, track.DurationMs));
@@ -215,12 +168,12 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
 
     public void PausePlayback()
     {
-        service.PausePlayback();
+        mss.PausePlayback();
     }
 
     public void PlayPlayback()
     {
-        service.PlayPlayback();
+        mss.PlayPlayback();
     }
 
     private void OnApplicationQuit()
