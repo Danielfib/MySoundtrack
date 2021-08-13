@@ -1,4 +1,4 @@
-﻿using SpotifyAPI.Web;
+using SpotifyAPI.Web;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +10,10 @@ using MySoundtrackService;
 
 public class MySoundtrackManager : Singleton<MySoundtrackManager>
 {
-    private List<FullTrack> m_tracks = null;
+    [Tooltip("Backup playlists are used in cases where the player doesn't have enough liked songs on his account. These playlists should be public.")]
+    public string[] BackupPlaylists;
+
+    private List<FullTrack> m_tracks = new List<FullTrack>();
 
     [HideInInspector]
     public int currentAreaPlaying = -1;
@@ -22,6 +25,8 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
     private Vector3 startingPlayerPos = Vector3.zero;
 
     private SpotifyWebAPIService service;
+
+    private const int MAX_FEATURED_PLAYLISTS = 5, MAX_TRACKS_PER_FEATURED_PLAYLIST = 90;
 
     private void Start()
     {
@@ -45,8 +50,71 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
     public async Task GetAllUserTracks()
     {
         print("getting user songs");
-        m_tracks = await service.GetAllUserSavedTracks();
+        //m_tracks = await service.GetAllUserSavedTracks();
+        //if (m_tracks == null || m_tracks.Count == 0)
+        //{
+        //    await UseBackupPlaylists();
+        //}
+        //await UseFeaturedPlaylists();
+        await UseBackupPlaylists();
         Debug.Log("Got user songs!");
+    }
+
+    private async Task UseBackupPlaylists()
+    {
+        if(BackupPlaylists.Length == 0)
+        {
+            //throw new Exception("Player doesn't have enough songs and you have not chosen BackupPlaylists at MySoundtrackManager!");
+            await UseFeaturedPlaylists();
+        } 
+        else
+        {
+            m_tracks.AddRange(await GetPlaylistsTracks(BackupPlaylists));
+        }
+    }
+
+    private async Task UseFeaturedPlaylists()
+    {
+        FeaturedPlaylistsRequest req = new FeaturedPlaylistsRequest();
+        req.Limit = MAX_FEATURED_PLAYLISTS;
+
+        var fPlaylists = await service.Spotify.Browse.GetFeaturedPlaylists(req);
+        string[] lista = new string[Math.Min(MAX_FEATURED_PLAYLISTS, fPlaylists.Playlists.Items.Count)];
+        for(var i = 0; i < fPlaylists.Playlists.Items.Count; i++)
+        {
+            lista[i] = fPlaylists.Playlists.Items[i].Id;
+        }
+
+        m_tracks.AddRange(await GetPlaylistsTracks(lista, true, MAX_TRACKS_PER_FEATURED_PLAYLIST));
+    }
+
+    private async Task<List<FullTrack>> GetPlaylistsTracks(string[] playlistsIds, bool useLimit = false, int limit = 10000)
+    {
+        List<FullTrack> tracks = new List<FullTrack>();
+
+        foreach (var playlist in playlistsIds)
+        {
+            string id = playlist;
+            if (playlist.Contains(':'))
+            {
+                var substringStart = playlist.LastIndexOf(':');
+                id = playlist.Substring(substringStart + 1, (playlist.Length - 1) - substringStart);
+            }
+
+            PlaylistGetItemsRequest req = new PlaylistGetItemsRequest(PlaylistGetItemsRequest.AdditionalTypes.Track);
+            if (useLimit) req.Limit = limit;
+
+            var playlistItems = await service.Spotify.Playlists.GetItems(id, req);
+            foreach (var playlistTrack in playlistItems.Items)
+            {
+                if (playlistTrack.Track is FullTrack)
+                {
+                    tracks.Add(playlistTrack.Track as FullTrack);
+                }
+            }
+        }
+
+        return tracks;
     }
 
     private void Initialize()
