@@ -98,11 +98,12 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
             if (playlist.Contains(':') && !playlist.Contains("https"))
             {
                 var substringStart = playlist.LastIndexOf(':');
-                id = playlist.Substring(substringStart + 1, (playlist.Length - 1) - substringStart);
+                var substringEnd = substringStart + 22;
+                id = playlist.Substring(substringStart + 1, substringEnd - substringStart);
             } else if (playlist.Contains('/'))
             {
                 var substringStart = playlist.LastIndexOf('/');
-                var substringEnd = playlist.LastIndexOf('?') - 1;
+                var substringEnd = substringStart + 22;
                 id = playlist.Substring(substringStart + 1, substringEnd - substringStart);
             }
 
@@ -193,8 +194,11 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
         foreach (var f in audioFeatures)
         {
             //smaller grades are better (less different from the parameters chosen)
-            float grade = (Math.Abs(f.Energy - energy) +
-                           Math.Abs(f.Valence - valence));
+            float grade = 100f;
+            if(f != null)
+            {
+                grade = (Math.Abs(f.Energy - energy) + Math.Abs(f.Valence - valence));
+            }
 
             trackGrades.Add(new Tuple<FullTrack, float>(m_tracks[count], grade));
             count++;
