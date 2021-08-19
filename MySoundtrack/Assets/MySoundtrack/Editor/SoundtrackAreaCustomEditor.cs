@@ -67,8 +67,8 @@ public class SoundtrackAreaCustomEditor : Editor
                     AssignLabel(targetSA.gameObject, battleVibeIcon);
                     break;
                 case 1:
-                    energyProp.floatValue = 0.8f;
-                    valenceProp.floatValue = 0.8f;
+                    energyProp.floatValue = 0.2f;
+                    valenceProp.floatValue = 1f;
                     AssignLabel(targetSA.gameObject, romanticVibeIcon);
                     break;
                 case 2:

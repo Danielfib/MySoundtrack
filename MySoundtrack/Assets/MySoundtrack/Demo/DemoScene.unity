@@ -510,6 +510,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4629758186783988176, guid: 21ed8d9a644b3fc47bb7af6218b7b446, type: 3}
+      propertyPath: BackupPlaylists.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4629758186783988176, guid: 21ed8d9a644b3fc47bb7af6218b7b446, type: 3}
+      propertyPath: BackupPlaylists.Array.data[0]
+      value: https://open.spotify.com/playlist/5hHdCvyiZLS2YblP0KKdIy?si=2a826ec24c75462d
+      objectReference: {fileID: 0}
+    - target: {fileID: 4629758186783988176, guid: 21ed8d9a644b3fc47bb7af6218b7b446, type: 3}
+      propertyPath: BackupPlaylists.Array.data[1]
+      value: https://open.spotify.com/playlist/7yhhIQhk4hhT0EdXb4oxLf?si=57df3b8649534bd5
+      objectReference: {fileID: 0}
     - target: {fileID: 4629758186783988190, guid: 21ed8d9a644b3fc47bb7af6218b7b446, type: 3}
       propertyPath: m_Name
       value: MySoundtrackManager
@@ -2159,11 +2171,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2979112111759290303, guid: 4641dda3f60ac4642bc1f58388f2185e, type: 3}
       propertyPath: energy
-      value: 0.8
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 2979112111759290303, guid: 4641dda3f60ac4642bc1f58388f2185e, type: 3}
       propertyPath: valence
-      value: 0.8
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2979112111759290303, guid: 4641dda3f60ac4642bc1f58388f2185e, type: 3}
       propertyPath: toolbarInt

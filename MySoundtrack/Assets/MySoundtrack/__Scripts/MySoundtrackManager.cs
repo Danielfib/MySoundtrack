@@ -21,10 +21,13 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
     List<Tuple<Vector3, Action>> initializationActions = new List<Tuple<Vector3, Action>>();
 
     private const int SONG_ABOUT_TO_END_TOLERANCE = 4000; //milliseconds
+    private const int SONG_LIMIT_TO_USE_BACKUP_PLAYLISTS = 150;
 
     private Vector3 startingPlayerPos = Vector3.zero;
 
     private MySoundtrackService mss;
+
+    #region Initialization
 
     private void Start()
     {
@@ -48,7 +51,7 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
     {
         print("getting user songs");
         m_tracks = await mss.GetAllUserSavedTracks();
-        if (m_tracks == null || m_tracks.Count == 0)
+        if (m_tracks == null || m_tracks.Count < SONG_LIMIT_TO_USE_BACKUP_PLAYLISTS)
         {
             await UseBackupPlaylistsInstead();
         }
@@ -90,7 +93,7 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
         foreach (var initializationAction in initializationActions.Select(x => x.Item2))
         {
             initializationAction.Invoke();
-            Thread.Sleep(5000);
+            Thread.Sleep(500);
         }
     }
 
@@ -98,6 +101,7 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
     {
         initializationActions.OrderBy(x => Vector3.Distance(x.Item1, startingPlayerPos));
     }
+    #endregion
 
     private IEnumerator StartWatchForSongEnd(Action callback, int timeToEnd)
     {
@@ -164,6 +168,13 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
 
         StopAllCoroutines();
         StartCoroutine(StartWatchForSongEnd(songAboutToEndCallback, track.DurationMs));
+    }
+
+    public void PlaySongsOfVibe(float e, float v)
+    {
+        var rankedTracks = GetBestSongsFor(e, v, 10);
+        int rand = UnityEngine.Random.Range(0, 9);
+        PlayTrack(rankedTracks[rand], () => PlaySongsOfVibe(e, v));
     }
 
     public void PausePlayback()

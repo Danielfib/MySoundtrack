@@ -18,6 +18,8 @@ public class SoundtrackArea : MonoBehaviour
     [HideInInspector, SerializeField]
     private float energy, valence;
 
+    private const int HOW_MANY_SONGS_TO_GET = 15;
+
     #region Editor
     [HideInInspector, SerializeField]
     public Color selectedVibeColor;
@@ -48,7 +50,7 @@ public class SoundtrackArea : MonoBehaviour
         {
             new Thread(() =>
             {
-                tracks.AddRange(MySoundtrackManager.Instance.GetBestSongsFor(energy, valence, 7));
+                tracks.AddRange(MySoundtrackManager.Instance.GetBestSongsFor(energy, valence, HOW_MANY_SONGS_TO_GET));
                 print("InitializedArea");
                 isInitialized = true;
             }).Start();
@@ -73,8 +75,8 @@ public class SoundtrackArea : MonoBehaviour
 
         if (MySoundtrackManager.Instance.EnteredNewArea(id))
         {
-            var rdmTop3 = UnityEngine.Random.Range(0, Mathf.Min(3, tracks.Count));
-            MySoundtrackManager.Instance.PlayTrack(tracks[rdmTop3], PlayNextSong);
+            var rdmTop10 = UnityEngine.Random.Range(0, Mathf.Min(10, tracks.Count));
+            MySoundtrackManager.Instance.PlayTrack(tracks[rdmTop10], PlayNextSong);
         }
     }
 
