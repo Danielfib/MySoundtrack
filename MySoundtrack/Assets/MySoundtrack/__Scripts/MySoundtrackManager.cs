@@ -170,11 +170,11 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
         StartCoroutine(StartWatchForSongEnd(songAboutToEndCallback, track.DurationMs));
     }
 
-    public void PlaySongsOfVibe(float e, float v)
+    public void PlaySongsOfVibe(float energy, float valence)
     {
-        var rankedTracks = GetBestSongsFor(e, v, 10);
+        var rankedTracks = GetBestSongsFor(energy, valence, 10);
         int rand = UnityEngine.Random.Range(0, 9);
-        PlayTrack(rankedTracks[rand], () => PlaySongsOfVibe(e, v));
+        PlayTrack(rankedTracks[rand], () => PlaySongsOfVibe(energy, valence));
     }
 
     public void PausePlayback()
