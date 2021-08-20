@@ -33,13 +33,13 @@ public class MySoundtrackManager : Singleton<MySoundtrackManager>
     {
         startingPlayerPos = Vector3.zero;
 
-        Thread initThread = new Thread(Initialize);
-        initThread.Start();
-
         if(mss == null)
         {
             mss = new MySoundtrackService();
         }
+
+        Thread initThread = new Thread(Initialize);
+        initThread.Start();
     }
 
     private void Connect()
