@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class CharacterController : MonoBehaviour
+public class CharacterController_Demo : MonoBehaviour
 {
     public float moveSpeed = 10.0f;
     private float frontMovement;
